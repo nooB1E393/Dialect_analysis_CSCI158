@@ -15,3 +15,21 @@ def trim_or_takeout_file(input_file_path, outfile_path, target_duration)
         trimmed_audio = librosa.util.fix_length(audio, target_length)
     
     sf.write(outfile_path, trimmed_audio, sr)
+
+
+
+# Example usage
+dataset_directory = "path/to/your/dataset"
+output_directory = "path/to/your/output/dataset"
+
+# Ensure the output directory exists
+os.makedirs(output_directory, exist_ok=True)
+
+# Iterate over the files in the dataset
+for filename in os.listdir(dataset_directory):
+    if filename.endswith(".wav"):
+        input_file_path = os.path.join(dataset_directory, filename)
+        output_file_path = os.path.join(output_directory, filename)
+        trim_or_takeout_file(input_file_path, output_file_path)
+        print(f"Processed {filename}")
+
