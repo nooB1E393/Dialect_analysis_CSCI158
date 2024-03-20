@@ -1,4 +1,5 @@
 
+
 import os
 import librosa
 import soundfile as sf
@@ -11,11 +12,17 @@ def trim_or_pad_audio_file(input_file_path, outfile_path, target_duration):
 
     if len(audio) > target_length:
         trimmed_audio = audio[:target_length]
-    else:  # padding
+        sf.write(outfile_path, trimmed_audio, sr)
+    elif  len(audio)< target_length:  # padding
+        """ padding = target_length - len(audio)
+        trimmed_audio = librosa.util.fix_length(audio, size=target_length) """
+    else:
         padding = target_length - len(audio)
-        trimmed_audio = librosa.util.fix_length(audio, size=target_length)
+        trimmed_audio = librosa.util.fix_length(audio, size=target_length) 
+        sf.write(outfile_path, trimmed_audio, sr)
 
-    sf.write(outfile_path, trimmed_audio, sr)
+
+   
 
 
 dataset_directory = 'EngMen/Irish'
@@ -30,6 +37,3 @@ for filename in os.listdir(dataset_directory):
         output_file_path = os.path.join(output_directory, filename)
         trim_or_pad_audio_file(input_file_path, output_file_path, 4)
         print(f"Processed {filename}")
-
-
-
