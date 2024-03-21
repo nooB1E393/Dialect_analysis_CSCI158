@@ -30,6 +30,9 @@ class DecisionTree:
         return Node(feature_index=best_split["feature_index"], threshold=best_split["threshold"], left=left_subtree, right=right_subtree)
 
    # to find the find_best_split and calculate_leaf_value
+   # find_best_split will find the best feature and threshold to split
+   # calculate_leaf_value for classification is based on predicting which class a given input belongs to, the leaf node should represent the most common class among the 
+   #training instances that end up in that leaf
  
 
     
