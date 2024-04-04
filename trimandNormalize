@@ -1,0 +1,40 @@
+import os
+import librosa
+import soundfile as sf
+import numpy as np
+def trim_or_pad_audio_file(input_file_path, outfile_path, target_duration):
+    # Load the audio file
+    audio, sr = librosa.load(input_file_path, sr=None)
+    # Calculate the target length
+    target_length = int(target_duration * sr)
+
+    if len(audio) >= target_length:
+        if len(audio) > target_length:
+            trimmed_audio = audio[:target_length]
+        sf.write(outfile_path, trimmed_audio, sr)
+    
+def rms_normalize(audio, target_rms,output_file_path):
+    """
+    Normalize the RMS of the audio to the target RMS level.
+    """
+    audio, sr = librosa.load(audio, sr=None)
+    current_rms = np.sqrt(np.mean(audio**2))
+    gain = target_rms / (current_rms + 1e-6)  # Adding a small number to avoid division by zero
+    normalized_audio= audio * gain
+    sf.write(output_file_path,normalized_audio,sr)
+
+   
+
+
+dataset_directory = 'data_samples/train_Span/new_Ven'
+output_directory = '158/new_Ven_normalized'
+
+# Create the output directory if it doesn't exist
+os.makedirs(output_directory, exist_ok=True)
+
+for filename in os.listdir(dataset_directory):
+    if filename.endswith(".wav"):
+        input_file_path = os.path.join(dataset_directory, filename)
+        output_file_path = os.path.join(output_directory, filename)
+        rms_normalize(input_file_path, .15,output_file_path)
+        print(f"Processed {filename}") 
