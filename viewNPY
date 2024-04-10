@@ -1,0 +1,26 @@
+import os
+import numpy as np
+def list_npy_files(folder_path):
+    npy_files = []
+    for file in os.listdir(folder_path):
+        if file.endswith(".npy"):
+            npy_files.append(file)
+    return npy_files
+
+def read_npy_files(folder_path):
+    npy_files = list_npy_files(folder_path)
+    for file_name in npy_files:
+        file_path = os.path.join(folder_path, file_name)
+        try:
+            array = np.load(file_path)
+            print(f"File: {file_name}, Data:")
+            print(array)
+        except Exception as e:
+            print(f"Error reading {file_path}: {e}")
+
+if __name__ == "__main__":
+    folder_path = "quantized_mfcc_features/Venn_mfccq3"
+    if os.path.isdir(folder_path):
+        read_npy_files(folder_path)
+    else:
+        print("Invalid folder path.")
