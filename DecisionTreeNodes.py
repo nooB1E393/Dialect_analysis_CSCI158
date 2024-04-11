@@ -1,5 +1,6 @@
 
 import numpy as np
+import panda as pd
 
 class Node:
     def __init__(self, feature_index=None, threshold=None, left=None, right=None, value=None):
