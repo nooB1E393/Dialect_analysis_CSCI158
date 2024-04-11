@@ -1,33 +1,30 @@
+import os
 import numpy as np
-import librosa
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+import joblib
 
-# Function to extract MFCC features from audio file
-def extract_mfcc(file_path, num_mfcc=13):
-    audio, sr = librosa.load(file_path, sr=None)
-    mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=num_mfcc)
-    return mfccs.T
-
-# Function to load dataset and extract MFCC features
-def load_data(file_paths, labels, num_mfcc=13):
+# Function to load MFCC features from a folder
+def load_data_from_folder(folder_path):
     X = []
     y = []
-    for file_path, label in zip(file_paths, labels):
-        mfccs = extract_mfcc(file_path, num_mfcc=num_mfcc)
-        X.extend(mfccs)
-        y.extend([label] * len(mfccs))
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        if file_path.endswith('.npy'):
+            mfccs = np.load(file_path)
+            X.extend(mfccs)
+            label = file_name.split("_")[0]  # Extract label from filename
+            y.extend([label] * len(mfccs))
     return np.array(X), np.array(y)
 
 # Example usage
 if __name__ == "__main__":
-    # Sample file paths and corresponding labels
-    file_paths = ["english_sample1.wav", "english_sample2.wav", "french_sample1.wav", "french_sample2.wav"]
-    labels = ["english", "english", "french", "french"]
+    # Folder path containing MFCC files
+    folder_path = "mfcc_folder"
 
-    # Load data and extract MFCC features
-    X, y = load_data(file_paths, labels)
+    # Load data (MFCC features) from the folder
+    X, y = load_data_from_folder(folder_path)
 
     # Split data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -44,3 +41,4 @@ if __name__ == "__main__":
     # Calculate accuracy
     accuracy = accuracy_score(y_test, y_pred)
     print("Accuracy:", accuracy)
+
