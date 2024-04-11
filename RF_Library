@@ -1,0 +1,46 @@
+import numpy as np
+import librosa
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Function to extract MFCC features from audio file
+def extract_mfcc(file_path, num_mfcc=13):
+    audio, sr = librosa.load(file_path, sr=None)
+    mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=num_mfcc)
+    return mfccs.T
+
+# Function to load dataset and extract MFCC features
+def load_data(file_paths, labels, num_mfcc=13):
+    X = []
+    y = []
+    for file_path, label in zip(file_paths, labels):
+        mfccs = extract_mfcc(file_path, num_mfcc=num_mfcc)
+        X.extend(mfccs)
+        y.extend([label] * len(mfccs))
+    return np.array(X), np.array(y)
+
+# Example usage
+if __name__ == "__main__":
+    # Sample file paths and corresponding labels
+    file_paths = ["english_sample1.wav", "english_sample2.wav", "french_sample1.wav", "french_sample2.wav"]
+    labels = ["english", "english", "french", "french"]
+
+    # Load data and extract MFCC features
+    X, y = load_data(file_paths, labels)
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Initialize Random Forest Classifier
+    clf = RandomForestClassifier(n_estimators=100, random_state=42)
+
+    # Train the classifier
+    clf.fit(X_train, y_train)
+
+    # Predict on the test set
+    y_pred = clf.predict(X_test)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy:", accuracy)
