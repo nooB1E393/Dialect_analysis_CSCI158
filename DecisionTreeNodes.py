@@ -1,6 +1,7 @@
 
 import numpy as np
-import panda as pd
+import pandas as pd
+
 
 class Node:
     def __init__(self, feature_index=None, threshold=None, left=None, right=None, value=None):
@@ -77,51 +78,51 @@ class DecisionTree:
                 
     return best_split
 
-def _entropy(self, Y):
-    # np.unique with return_counts=True finds all unique class labels within Y
-    # and counts how many times each unique label appears.
-    _, counts = np.unique(Y, return_counts=True)
-    
-    # Calculates the probabilities of each class by dividing the count of each class
-    # by the total number of instances.
-    probabilities = counts / counts.sum()
-    
-    # Calculates the entropy of Y. Entropy is a measure of disorder or unpredictability.
-    # High entropy means the data has high variance and it's hard to draw any conclusions from it.
-    # It's calculated as the sum of the probabilities of each class times the log (base 2) of the
-    # probability, then multiplied by -1 to make the sum positive.
-    return -np.sum(probabilities * np.log2(probabilities))
+    def _entropy(self, Y):
+        # np.unique with return_counts=True finds all unique class labels within Y
+        # and counts how many times each unique label appears.
+        _, counts = np.unique(Y, return_counts=True)
+        
+        # Calculates the probabilities of each class by dividing the count of each class
+        # by the total number of instances.
+        probabilities = counts / counts.sum()
+        
+        # Calculates the entropy of Y. Entropy is a measure of disorder or unpredictability.
+        # High entropy means the data has high variance and it's hard to draw any conclusions from it.
+        # It's calculated as the sum of the probabilities of each class times the log (base 2) of the
+        # probability, then multiplied by -1 to make the sum positive.
+        return -np.sum(probabilities * np.log2(probabilities))
 
 
-def _information_gain(self, Y, left_indices, right_indices):
-    # Calculates the entropy of the entire dataset before the split.
-    # This serves as the starting point for measuring improvement (gain).
-    parent_entropy = self._entropy(Y)
+    def _information_gain(self, Y, left_indices, right_indices):
+        # Calculates the entropy of the entire dataset before the split.
+        # This serves as the starting point for measuring improvement (gain).
+        parent_entropy = self._entropy(Y)
+        
+        # n holds the total number of instances in Y.
+        n = len(Y)
+        
+        # n_left and n_right hold the number of instances that would be in the left and right
+        # child nodes if we split the dataset according to a particular feature's threshold.
+        n_left, n_right = len(left_indices), len(right_indices)
+        
+        # child_entropy calculates the weighted average of the entropy of the child nodes
+        # after a potential split. It combines the entropies of the left and right subsets,
+        # weighted by their proportion of the total dataset.
+        child_entropy = (n_left / n) * self._entropy(Y[left_indices]) + (n_right / n) * self._entropy(Y[right_indices])
+        
+        # The information gain is calculated as the difference between the entropy of the
+        # parent node (before the split) and the combined entropy of the child nodes (after the split).
+        # A higher gain means the split made the subsets more orderly (less entropy) compared
+        # to the original dataset.
+        gain = parent_entropy - child_entropy
+        
+        return gain
     
-    # n holds the total number of instances in Y.
-    n = len(Y)
-    
-    # n_left and n_right hold the number of instances that would be in the left and right
-    # child nodes if we split the dataset according to a particular feature's threshold.
-    n_left, n_right = len(left_indices), len(right_indices)
-    
-    # child_entropy calculates the weighted average of the entropy of the child nodes
-    # after a potential split. It combines the entropies of the left and right subsets,
-    # weighted by their proportion of the total dataset.
-    child_entropy = (n_left / n) * self._entropy(Y[left_indices]) + (n_right / n) * self._entropy(Y[right_indices])
-    
-    # The information gain is calculated as the difference between the entropy of the
-    # parent node (before the split) and the combined entropy of the child nodes (after the split).
-    # A higher gain means the split made the subsets more orderly (less entropy) compared
-    # to the original dataset.
-    gain = parent_entropy - child_entropy
-    
-    return gain
-
-   # to find the find_best_split and calculate_leaf_value
-   # find_best_split will find the best feature and threshold to split
-   # calculate_leaf_value for classification is based on predicting which class a given input belongs to, the leaf node should represent the most common class among the 
-   #training instances that end up in that leaf
- 
+       # to find the find_best_split and calculate_leaf_value
+       # find_best_split will find the best feature and threshold to split
+       # calculate_leaf_value for classification is based on predicting which class a given input belongs to, the leaf node should represent the most common class among the 
+       #training instances that end up in that leaf
+     
 
     
