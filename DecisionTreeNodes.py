@@ -17,6 +17,24 @@ class DecisionTree:
     def fit(self, X, Y):
         self.root = self._build_tree(X, Y)
 
+    def fit_from_csv(self, csv_path, label_column):
+        """Load data from a CSV file and fit the decision tree.
+
+        Args:
+            csv_path (str): The file path to the CSV file.
+            label_column (str): The name of the column that contains the labels.
+        """
+        # Load the dataset
+        data = pd.read_csv(csv_path)
+        
+        # Split the dataset into features and labels
+        X = data.drop(label_column, axis=1).values
+        Y = data[label_column].values
+        
+        # Fit the decision tree with the loaded data
+        self.fit(X, Y)
+    #end of function
+
     def _build_tree(self, X, Y, depth=0):
         if depth == self.max_depth or len(set(Y)) == 1:
             return Node(value=self._calculate_leaf_value(Y))
