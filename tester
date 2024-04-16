@@ -1,0 +1,30 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from DecisionTreeAlgo import DecisionTree
+
+data = pd.read_csv('Labeled_Data.csv')
+X = data.drop('Dialect', axis=1).values  # Features
+Y = data['Dialect'].values  # Target variable
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+tree = DecisionTree(max_depth=6)  # Adjust the max_depth as needed
+tree.fit(X_train, Y_train)
+
+def predict(node, sample):
+    """ Recursively predict the class of a sample based on the decision tree """
+    if node.value is not None:
+        return node.value
+    if sample[node.feature_index] <= node.threshold:
+        return predict(node.left, sample)
+    else:
+        return predict(node.right, sample)
+
+predictions = np.array([predict(tree.root, x) for x in X_test])
+
+accuracy = np.mean(predictions == Y_test)
+print(f"Accuracy: {accuracy:.4f}")
+last_sample = X[-1]  # Get the last sample from the dataset
+predicted_label = tree.predict(last_sample)  # Predict the class label for the last sample
+print("Predicted Label for the Last Sample:", predicted_label)
