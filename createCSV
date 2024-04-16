@@ -1,0 +1,40 @@
+import os
+import numpy as np
+import pandas as pd
+
+def load_quantized_features(folder_path, label):
+    """Load quantized features and label them."""
+    data = []
+    files = [f for f in os.listdir(folder_path) if f.endswith('.npy')]
+    for file in files:
+        quantized_features = np.load(os.path.join(folder_path, file))
+        for feature in quantized_features:
+            # Append the feature and its dialect label to the data list.
+            data.append([feature, label])
+    return data
+
+# Define the paths to the folders and their corresponding labels.
+dialects_info = {
+    'dialectInfo/English_CSV': 'English',
+    'dialectInfo/Indian_CSV': 'Indian',
+    'dialectInfo/Spanish_CSV': 'Spanish',
+}
+
+# Initialize a list to store all features and labels.
+all_data = []
+
+# Load and label the quantized features from each dialect.
+for folder_path, label in dialects_info.items():
+    dialect_data = load_quantized_features(folder_path, label)
+    all_data.extend(dialect_data)
+
+# Shuffle the data to make it random
+np.random.shuffle(all_data)
+
+# Convert the shuffled list to a DataFrame.
+df = pd.DataFrame(all_data, columns=['Feature', 'Dialect'])
+
+# Save the DataFrame to a CSV file.
+df.to_csv('ActualData.csv', index=False)
+
+print("CSV file created successfully.")
