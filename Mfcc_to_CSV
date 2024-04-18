@@ -1,0 +1,53 @@
+
+import numpy as np
+import os
+import csv
+
+def transfer_mfcc_to_csv(input_folder_path, csvwriter):
+    """Transfer MFCC data from .npy files to a CSV file."""
+    # Iterate over each .npy file in the folder
+    for file_name in os.listdir(input_folder_path):
+        if file_name.endswith('.npy'):
+            file_path = os.path.join(input_folder_path, file_name)
+
+            # Load MFCC features from .npy file
+            mfccs = np.load(file_path)
+
+            # Flatten the MFCC array to a single row
+            mfccs_flat = mfccs.flatten()
+
+            # Write the filename and MFCC features to the CSV file
+            row_data = [os.path.splitext(file_name)[0]] + mfccs_flat.tolist()
+            csvwriter.writerow(row_data)
+
+# List of input folders containing the MFCC .npy files
+input_folders = [
+    '158/mfccFeat_norm/South_mfcc',
+    '158/mfccFeat_norm/Arg_mfcc',
+    '158/mfccFeat_norm/Bengali_mfcc',
+    '158/mfccFeat_norm/Chile_mfcc',
+    '158/mfccFeat_norm/Hindi_mfcc',
+    '158/mfccFeat_norm/Irish_mfcc',
+    '158/mfccFeat_norm/Pun_mfcc',
+    '158/mfccFeat_norm/Scott_mfcc',
+    '158/mfccFeat_norm/Ven_mfcc',
+    
+    # Add more folder paths here if needed
+]
+
+# Output CSV file path
+output_csv_path = 'NO_Q_Data.csv'
+
+# Open CSV file for writing
+with open(output_csv_path, 'w', newline='') as csvfile:
+    csvwriter = csv.writer(csvfile)
+
+    # Write header row with feature labels
+    header_row = ['Filename'] + [f'MFCC_{i}' for i in range(1, 16)]
+    csvwriter.writerow(header_row)
+
+    # Transfer MFCC data to CSV files for each folder
+    for input_folder in input_folders:
+        transfer_mfcc_to_csv(input_folder, csvwriter)
+
+print("MFCC data transferred to a single CSV file successfully.")
