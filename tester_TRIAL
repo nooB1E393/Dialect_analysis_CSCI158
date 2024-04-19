@@ -1,0 +1,39 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from DecisionTreeAlgo import DecisionTree
+
+# Load merged MFCC features CSV file
+data = pd.read_csv('data_lableled.csv')
+
+# Extract features (MFCCs) and target variable
+X = data.drop('Filename', axis=1).values  # Features (MFCCs)
+Y = data['Filename'].values  # Target variable (filename, which represents the dialect)
+
+# Split data into training and testing sets
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+# Train decision tree model
+tree = DecisionTree(max_depth=15)  # Adjust the max_depth as needed
+tree.fit(X_train, Y_train)
+
+def predict(node, sample):
+    """ Recursively predict the class of a sample based on the decision tree """
+    if node.value is not None:
+        return node.value
+    if sample[node.feature_index] <= node.threshold:
+        return predict(node.left, sample)
+    else:
+        return predict(node.right, sample)
+
+# Make predictions on test set
+predictions = np.array([predict(tree.root, x) for x in X_test])
+
+# Calculate accuracy
+accuracy = np.mean(predictions == Y_test)
+print(f"Accuracy: {accuracy:.4f}")
+
+# Example of predicting the class label for the last sample
+last_sample = X[-1]  # Get the last sample from the dataset
+predicted_label = tree.predict(last_sample)  # Predict the class label for the last sample
+print("Predicted Label for the Last Sample:", predicted_label)
